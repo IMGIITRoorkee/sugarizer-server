@@ -2,14 +2,16 @@ version: "2"
 
 services:
   mongodb:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile-mongodb
+    image: mongo:latest
     restart: always
     volumes:
       - ./docker/db:/data/db
     environment:
       - AUTH=no
+      - MONGO_INITDB_DATABASE=sugarizer
+    expose:
+    - 27017
+      
 
   server:
     build:
@@ -20,8 +22,11 @@ services:
       - ./:/sugarizer-server
       - ../:/sugarizer-certificate
       - ../sugarizer:/sugarizer-client
-    links:
+    depends_on:
       - mongodb
+    expose:
+      - 8039
+      - 8080
     ports:
       - 8039:8039
       - 8080:80
